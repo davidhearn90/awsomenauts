@@ -15,7 +15,7 @@ game.PlayerEntity = me.Entity.extend({
 			}
 		}]);
 
-		this.body.setVelocity(5, 0);
+		this.body.setVelocity(5, 20);
 
 	},
 
