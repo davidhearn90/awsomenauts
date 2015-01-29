@@ -32,7 +32,7 @@
   </data>
  </layer>
  <objectgroup name="BaseEntities">
-  <object name="EemyBase" x="912" y="418" width="66" height="136">
+  <object name="EnemyBase" x="912" y="418" width="66" height="136">
    <properties>
     <property name="EnemyBase" value=""/>
    </properties>
