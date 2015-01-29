@@ -63,7 +63,7 @@ game.PlayerEntity = me.Entity.extend({
 
 game.PlayerBaseEntity = me.Entity.extend({
 	init: function(x, y, settings){
-		this._super(me.Entity, 'init' [x, y, {
+		this._super(me.Entity, 'init', [x, y, {
 
 			image: "tower",
 			width: 100,
@@ -108,7 +108,7 @@ game.PlayerBaseEntity = me.Entity.extend({
 
 game.EnemyBaseEntity = me.Entity.extend({
 	init: function(x, y, settings){
-		this._super(me.Entity, 'init' [x, y, {
+		this._super(me.Entity, 'init', [x, y, {
 
 			image: "tower",
 			width: 100,

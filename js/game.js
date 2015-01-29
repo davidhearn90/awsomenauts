@@ -39,7 +39,10 @@ var game = {
 
 	// Run on game resources loaded.
 	"loaded" : function () {
+		me.input.bindKey(me.input.KEY.RIGHT, "right");
+
 		me.pool.register("player", game.PlayerEntity, true);
+		
 		me.pool.register("PlayerBase", game.PlyerBaseEntity);
 		me.pool.register("EnemyBase", game.EnemyBaseEntity);
 
