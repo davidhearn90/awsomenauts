@@ -42,8 +42,8 @@ var game = {
 		me.input.bindKey(me.input.KEY.RIGHT, "right");
 
 		me.pool.register("player", game.PlayerEntity, true);
-		
-		me.pool.register("PlayerBase", game.PlyerBaseEntity);
+
+		me.pool.register("PlayerBase", game.PlayerBaseEntity);
 		me.pool.register("EnemyBase", game.EnemyBaseEntity);
 
 		me.state.set(me.state.MENU, new game.TitleScreen());
