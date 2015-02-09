@@ -238,11 +238,11 @@ game.EnemyCreep = me.Entity.extend({ // enemy team creep
 		this.health = 10;
 		this.alwaysUpdate = true;
 
-		this.setVelocity(3, 20);
+		this.body.setVelocity(3, 20);
 
 		this.type = "EnemyCreep";
 
-		this.renderable.addAnimation("walk," [3, 4, 5], 80);
+		this.renderable.addAnimation("walk", [3, 4, 5], 80);
 		this.renderable.setCurrentAnimation("walk");
 
 	},
@@ -255,7 +255,24 @@ game.EnemyCreep = me.Entity.extend({ // enemy team creep
 
 
 
+game.GameManager = Object.extend({ // is a object not a entities
+	init: function(x, y, settings){
+		this.now = new Date().getTime();
+		this.lastCreep = new Date().getTime();
 
+		this.alwaysUpdate = true;
 
+	},
 
+	update: function(){
+		this.now = new Date().getTime();
 
+		if (Math.round(this.now/1000)%10 ===0 && (this.now - this.lastCreep >= 1000)) { // % this is a mod it checks if we have mutiple 10 ?????
+			this.lastCreep = this.now;
+			var creep = me.pool.pull("EnemyCreep", 1000, 0, {});
+			me.game.world.addChild(creep, 5);
+	}
+
+		return true;
+	}
+});
