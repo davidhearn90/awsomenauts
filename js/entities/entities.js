@@ -12,7 +12,8 @@ game.PlayerEntity = me.Entity.extend({// game and me .Entity is a class
 				}
 		}]);
 
-	   
+	   	this.type = "PlayerEntity";
+	   	this.health = 20;
 	    this.body.setVelocity(5, 20); // this part sets the speed of the player
 	    this.facing = "right";//keeps track of which direction your character is going
 	   	this.now = new Date().getTime();// it keep track of time
@@ -93,6 +94,13 @@ game.PlayerEntity = me.Entity.extend({// game and me .Entity is a class
 
 
 	},
+
+	loseHealth: function(damage){
+		this.health = this.health - damage;
+		console.log(this.health);
+	
+	},
+
 
 	collideHandler: function(response){
 		if (response.b.type==='EnemyBaseEntity') {
@@ -272,13 +280,30 @@ game.EnemyCreep = me.Entity.extend({ // enemy team creep
 	collideHandler: function(response){
 
 		if (response.b.type=== 'PlayerBase') {
-
 			this.attacking=true;
 			//this.lastAttacking=true.now;
 
 			this.body.vel.x = 0;
 			this.pos.x = this.pos.x +1;
 			if ((this.now-this.lastHit >= 1000)) {
+
+				this.lastHit = this.now;
+				response.b.loseHealth(1);
+			};
+		}
+		else if (response.b.type==='PlayerEntity') {
+			var xdif = this.pos.x - response.b.pos.x;
+
+			this.attacking=true;
+			//this.lastAttacking=true.now;
+
+
+			if (xdif>0) {
+			this.pos.x = this.pos.x +1;
+
+			this.body.vel.x = 0;
+			};
+			if ((this.now-this.lastHit >= 1000) && xdif>0) {
 
 				this.lastHit = this.now;
 				response.b.loseHealth(1);
