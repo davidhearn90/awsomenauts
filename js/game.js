@@ -1,18 +1,33 @@
-
 /* Game namespace */
 var game = {
 
 	// an object where to store game information
 	data : {
 		// score
-		score : 0
+		score : 0,
+                enemyBaseHealth: 10,
+                playerBaseHealth: 10,
+                enemyCreepHealth: 10,
+                playerHealth: 10,
+                enemyCreepAttack: 1,
+                playerAttack: 1,
+//                orcBaseDamage: 10,
+//                orcBaseHealth: 100,
+//                orcBaseSpeed: 3,
+//                orcBaseDefense: 0,
+                playerAttackTimer: 1000,
+                enemyCreepAttackTimer: 1000,
+                playerMoveSpeed: 5,
+                creepMoveSpeed: 5,
+                gameManager: "",
+                player: ""
 	},
 	
 	
 	// Run on page load.
 	"onload" : function () {
 	// Initialize the video.
-	if (!me.video.init("screen",  me.video.CANVAS, 1067, 600, true, '1.0')) {
+	if (!me.video.init("screen",  me.video.CANVAS, 1067, 600, true, 'auto')) {
 		alert("Your browser does not support HTML5 canvas.");
 		return;
 	}
@@ -37,18 +52,19 @@ var game = {
 	me.state.change(me.state.LOADING);
 },
 
+
 	// Run on game resources loaded.
 	"loaded" : function () {
-		me.input.bindKey(me.input.KEY.RIGHT, "right");
-
-		me.pool.register("player", game.PlayerEntity, true);
-
-		me.pool.register("PlayerBase", game.PlayerBaseEntity);
-		me.pool.register("EnemyBase", game.EnemyBaseEntity);
-		me.pool.register("EnemyCreep", game.EnemyCreep, true);
-	    me.pool.register("GameManager", game.GameManager, true);
-
-
+            //make a pool register that adds the player in the game
+            //We set to ture if there is more than one of them
+            me.pool.register("levelTrigger", game.levelTrigger);
+            me.pool.register("player", game.PlayerEntity, true);
+            me.pool.register("PlayerBase", game.PlayerBaseEntity);
+            me.pool.register("EnemyBase", game.EnemyBaseEntity);
+            me.pool.register("EnemyCreep", game.EnemyCreep, true);
+            me.pool.register("GameManager", game.GameManager);
+            me.pool.register("levelTrigger", game.LevelTrigger);
+            
 		me.state.set(me.state.MENU, new game.TitleScreen());
 		me.state.set(me.state.PLAY, new game.PlayScreen());
 

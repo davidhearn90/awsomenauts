@@ -13,12 +13,13 @@ game.PlayerEntity = me.Entity.extend({
                }
        }]);
    this.type = "PlayerEntity";
-   this.health = 20;
+   this.health = game.data.playerHealth;
    //you can change height of how high you want to jump
-   this.body.setVelocity(5, 21);
+   this.body.setVelocity(game.data.playerMoveSpeed, 21);
    this.facing = "right";
    this.now = new Date().getTime();
    this.lastHit = this.now;
+   this.dead = false;
    this.lastAttack = new Date().getTime();
    //make the characcter walk normally
    this.renderable.addAnimation("idle", [78]);
@@ -34,6 +35,14 @@ game.PlayerEntity = me.Entity.extend({
    
    update: function(delta){
        this.now = new Date().getTime();
+       
+       if(this.health <= 0){
+           this.dead = true;
+           this.pos.x = 10;
+           this.pos.y = 0;
+           this.health = game.data.playerHealth;
+       }
+       
        if(me.input.isKeyPressed("right")) {
            //adds to the position of my x by the velocity defined above in
            //setVelocity() and multiplying it by me.timer.tick.
@@ -58,6 +67,7 @@ game.PlayerEntity = me.Entity.extend({
          
        if(me.input.isKeyPressed("attack")) {
            if(!this.renderable.isCurrentAnimation("attack")) {
+               console.log(!this.renderable.isCurrentAnimation("attack"));
                //sets the current animation to attack and once that is over
                //goes back to the idle animation
                this.renderable.setCurrentAnimation("attack", "idle");
@@ -112,151 +122,11 @@ this.body.pausing = true;
    
    loseHealth: function(damage){
      this.health = this.health - damage; 
+     console.log(this.health);
    },
 
    collideHandler: function(response){
        //This makes the tower solid and also on the top
-       if(response.b.type === "EnemyBaseEntity"){
-           var ydif = this.pos.y - response.b.pos.y;
-           var xdif = this.pos.x - response.b.pos.x;
-           
-           console.log("xdif" + xdif + " ydif " +ydif);
-           
-            if(ydif<-40 && xdif< 70 && xdif>-35){
-               this.body.falling = false;
-               this.body.vel.y = -1;
-           }
-           
-           else if(xdif>-35 && this.facing === "right" && (xdif<0)){
-               this.body.vel.x = 0;
-               this.pos.x = this.pos.x -1;
-           } else if(xdif<70 && this.facing === "left" && (xdif>0)){
-               this.body.vel.x = 0;
-               this.pos.x = this.pos.x +1;
-           }
-        
-           if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= 1000){
-               console.log("tower Hit");
-               this.lastHit = this.now;
-               response.b.loseHealth();
-           }
-       }else if(response.b.type === "EnemyCreep"){
-           var xdif = this.pos.x - response.b.pos.x; 
-           var ydif = this.pos.y - response.b.pos.y;
-           
-           if(xdif>0){
-               this.pos.x = this.pos.x + 1;
-               if(this.facing === "left"){
-                   this.body.vel.x = 0;
-               }
-           }else{
-               this.pos.x = this.pos.x - 1;
-               if(this.facing === "right"){
-                   this.body.vel.x = 0;
-               }
-           }
-
-           if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= 1000
-                  && (Math.abs(ydif) <= 40) && 
-                  (((xdif>0) && this.facing === "left") || ((xdif<0) && this.facing === "right")) 
-                  ){
-               this.lastHit = this.now;
-               response.b.loseHealth(1);
-               
-           }
-       }
-   }
-});
-
-game.PlayerBaseEntity = me.Entity.extend({
-    init: function (x, y, settings) {
-        this._super(me.Entity, 'init', [x, y, {
-                image: "tower",
-                width: 100,
-                height: 100,
-                spritewidth: "100",
-                spriteheight: "100",
-                getShape: function() {
-                    return (new me.Rect(0, 0, 100, 70)).toPolygon();
-                }
-        }]);
-    this.broken = false;
-    this.health = 10;
-    this.alwaysUpdate = true;
-    this.body.onCollision = this.onCollision.bind(this);
-    this.type = "PlayerBase";
-    
-    this.renderable.addAnimation("idle", [0]);
-    this.renderable.addAnimation("broken", [1]);
-    this.renderable.setCurrentAnimation("idle");
-        
-    },
-    
-    update: function(delta) {
-        if(this.health<=0){
-            this.broken = true;
-            this.renderable.setCurrentAnimation("broken");
-        }
-        this.body.update(delta);
-        
-        this._super(me.Entity, "update", [delta]);
-        return true;
-    },
-    
-    loseHealth: function(damage){
-      this.health = this.health - damage;  
-    },
-    
-    onCollision: function(){
-        
-    }
-});
-
-game.EnemyBaseEntity = me.Entity.extend({
-    init: function (x, y, settings) {
-        this._super(me.Entity, 'init', [x, y, {
-                image: "tower",
-                width: 100,
-                height: 100,
-                spritewidth: "100",
-                spriteheight: "100",
-                getShape: function() {
-                    return (new me.Rect(0, 0, 100, 70)).toPolygon();
-                }
-        }]);
-    this.broken = false;
-    this.health = 10;
-    this.alwaysUpdate = true;
-    this.body.onCollision = this.onCollision.bind(this);
-    
-    this.type = "EnemyBaseEntity";
-    
-    this.renderable.addAnimation("idle", [0]);
-    this.renderable.addAnimation("broken", [1]);
-    this.renderable.setCurrentAnimation("idle");
-        
-    },
-    
-    update: function(delta) {
-        if(this.health<=0){
-            this.broken = true;
-            this.renderable.setCurrentAnimation("broken");
-        }
-        this.body.update(delta);
-        
-        this._super(me.Entity, "update", [delta]);
-        return true;
-    },
-    
-    onCollision: function(){
-        
-    },
-    
-    loseHealth: function() {
-        this.health--;
-    },
-   collideHandler: function(response){
-    //This makes the tower solid and also on the top
        if(response.b.type === "EnemyBaseEntity"){
            var ydif = this.pos.y - response.b.pos.y;
            var xdif = this.pos.x - response.b.pos.x;
@@ -307,7 +177,98 @@ game.EnemyBaseEntity = me.Entity.extend({
            }
        }
    }
+});
+
+game.PlayerBaseEntity = me.Entity.extend({
+    init: function (x, y, settings) {
+        this._super(me.Entity, 'init', [x, y, {
+                image: "tower",
+                width: 100,
+                height: 100,
+                spritewidth: "100",
+                spriteheight: "100",
+                getShape: function() {
+                    return (new me.Rect(0, 0, 100, 70)).toPolygon();
+                }
+        }]);
+    this.broken = false;
+    this.health = game.data.playerBaseHealth;
+    this.alwaysUpdate = true;
+    this.body.onCollision = this.onCollision.bind(this);
+    this.type = "PlayerBase";
+    
+    this.renderable.addAnimation("idle", [0]);
+    this.renderable.addAnimation("broken", [1]);
+    this.renderable.setCurrentAnimation("idle");
+        
+    },
+    
+    update: function(delta) {
+        if(this.health<=0){
+            this.broken = true;
+            this.renderable.setCurrentAnimation("broken");
+        }
+        this.body.update(delta);
+        
+        this._super(me.Entity, "update", [delta]);
+        return true;
+    },
+    
+    loseHealth: function(damage){
+      this.health = this.health - damage;  
+    },
+    
+    onCollision: function(){
+        
+    }
+});
+
+game.EnemyBaseEntity = me.Entity.extend({
+    init: function (x, y, settings) {
+        this._super(me.Entity, 'init', [x, y, {
+                image: "tower",
+                width: 100,
+                height: 100,
+                spritewidth: "100",
+                spriteheight: "100",
+                getShape: function() {
+                    return (new me.Rect(0, 0, 100, 70)).toPolygon();
+                }
+        }]);
+    this.broken = false;
+    this.health = game.data.enemyBaseHealth;
+    this.alwaysUpdate = true;
+    this.body.onCollision = this.onCollision.bind(this);
+    
+    this.type = "EnemyBaseEntity";
+    
+    this.renderable.addAnimation("idle", [0]);
+    this.renderable.addAnimation("broken", [1]);
+    this.renderable.setCurrentAnimation("idle");
+        
+    },
+    
+    update: function(delta) {
+        if(this.health<=0){
+            this.broken = true;
+            this.renderable.setCurrentAnimation("broken");
+        }
+        this.body.update(delta);
+        
+        this._super(me.Entity, "update", [delta]);
+        return true;
+    },
+    
+    onCollision: function(){
+        
+    },
+    
+    loseHealth: function() {
+        this.health--;
+    },
+   collideHandler: function(response){
        
+   }
 }); 
 
 game.LevelTrigger = me.Entity.extend({
@@ -335,7 +296,7 @@ game.EnemyCreep = me.Entity.extend({
                     }
             
         }]);
-    this.health = 10;
+    this.health = game.data.enemyCreepHealth;
     this.alwaysUpdate = true;
     //lets us know if the enemy is currently attacking
     this.attacking = false;
@@ -357,6 +318,7 @@ game.EnemyCreep = me.Entity.extend({
     },
     
     update: function (delta){
+        console.log(this.health);
         if(this.health <= 0){
             me.game.world.removeChild(this);
         }
@@ -385,7 +347,7 @@ game.EnemyCreep = me.Entity.extend({
                 //updates the last hit timer
                 this.lastHit = this.now;
                 //makes the player base call its loseHealth fucntion and passes it a damage of one
-                response.b.loseHealth(1);
+                response.b.loseHealth(game.data.enemyCreepAttack);
             }
         }else if(response.b.type==="PlayerEntity"){
             var xdif = this.pos.x - response.b.pos.x;
@@ -404,7 +366,7 @@ game.EnemyCreep = me.Entity.extend({
                 //updates the last hit timer
                 this.lastHit = this.now;
                 //makes the player call its loseHealth fucntion and passes it a damage of one
-              response.b.loseHealth(1);
+              response.b.loseHealth(game.data.enemyCreepAttack);
             }
         }
     }
