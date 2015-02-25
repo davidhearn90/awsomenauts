@@ -1,8 +1,25 @@
 game.PlayerEntity = me.Entity.extend({
     //our player entity is going to have a height and width of 64
    init: function(x, y, settings) {
-       //call the constructor
-       this._super(me.Entity, 'init', [x, y, {
+       this.setSuper();
+       this.setPlayerTimers();
+       this.setAttributes();
+       this.type = "PlayerEntity";
+       this.setFlags();
+
+    //get the camera to follow the player for more than one screen
+   me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
+
+   this.addAnimation();
+   //If the player stops running, he will stop at the idle image of the player
+   this.renderable.setCurrentAnimation("idle");
+   
+   
+   
+   },
+
+   setSuper: function(){
+    this._super(me.Entity, 'init', [x, y, {
                image: "player", 
                width: 64,
                height: 64,
@@ -12,27 +29,38 @@ game.PlayerEntity = me.Entity.extend({
                    return(new me.Rect(0, 0, 64, 64)).toPolygon();
                }
        }]);
-   this.type = "PlayerEntity";
+
+   },
+
+ setPlayerTimers: function(){
+      this.now = new Date().getTime();
+      this.lastHit = this.now;
+      this.lastAttack = new Date().getTime();
+
+ },
+
+ setAttributes: function(){
    this.health = game.data.playerHealth;
    //you can change height of how high you want to jump
    this.body.setVelocity(game.data.playerMoveSpeed, 21);
-   this.facing = "right";
-   this.now = new Date().getTime();
-   this.lastHit = this.now;
-   this.dead = false;
    this.attack = game.data.playerAttack;
-   this.lastAttack = new Date().getTime();
+ 
+ },
+
+ setFlags: function(){
+   this.facing = "right";
+   this.dead = false;
+  
+ },
+
+ addAnimation: function(){
+  
    //make the characcter walk normally
    this.renderable.addAnimation("idle", [78]);
    this.renderable.addAnimation("walk", [117, 118, 119, 120, 121, 122, 123, 124, 125], 80);
    this.renderable.addAnimation("attack",[65, 66, 67, 68, 69, 70, 71, 72], 80);
-   //If the player stops running, he will stop at the idle image of the player
-   this.renderable.setCurrentAnimation("idle");
-   
-   //get the camera to follow the player for more than one screen
-   me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
-   
-   },
+ },
+
    
    update: function(delta){
        this.now = new Date().getTime();
