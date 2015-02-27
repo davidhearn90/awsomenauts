@@ -47,6 +47,7 @@ game.PlayerEntity = me.Entity.extend({
        //Keeps track of which direction your player is going
        this.facing = "right";
        this.dead = false;
+       this.attacking = false;
    },
    
    addAnimation: function(){
@@ -62,38 +63,7 @@ game.PlayerEntity = me.Entity.extend({
        this.dead = checkIfDead();
        
        this.checkKeyPressesAndMove();
-         
-       if(me.input.isKeyPressed("attack")) {
-           if(!this.renderable.isCurrentAnimation("attack")) {
-               //sets the current animation to attack and once that is over
-               //goes back to the idle animation
-               this.renderable.setCurrentAnimation("attack", "idle");
-               //Makes it so that the nest time we start this sequence we begin
-               //from the first animation, not wherever we left off when we switched
-               //to another animation
-               me.audio.play("slash");
-               this.renderable.setAnimationFrame();
-           }
-       }
-       
-       //make the character stand normally facing us and set that as current animation
-       else if(this.body.vel.x !==0 && !this.renderable.isCurrentAnimation("attack")) {
-           //when you attack, don't stay in that animation
-       if(!this.renderable.isCurrentAnimation("walk")) {
-           this.renderable.setCurrentAnimation("walk");
-       }
-       }else if(!this.renderable.isCurrentAnimation("attack")){
-           //don't forget to leave your currnet animation idle
-           this.renderable.setCurrentAnimation("idle");
-       }   
-       
-     
-       
-       //make an if statement and input the player whenever he can jump
-       //I can also add funny audio
-       if(me.input.isKeyPressed("jump")) {
-      this.jump();
-       }
+        this.setAnimation();
        //This can pause the game, but hard to resume
 if (me.input.isKeyPressed("pause")) {
     me.state.pause();
@@ -127,7 +97,14 @@ this.body.pausing = true;
        //make the velocity for the x-axis be 0, otherwise the characher will move on its own
         else {
            this.body.vel.x = 0;
-       }  
+       }
+       //make an if statement and input the player whenever he can jump
+       //I can also add funny audio
+       if(me.input.isKeyPressed("jump")) {
+      this.jump();
+       }
+              this.attacking = me.input.isKeyPressed("attack");
+
    },
            
            moveRight: function(){
@@ -157,6 +134,31 @@ this.body.pausing = true;
                me.audio.play("21");
            }
            },
+           setAnimation: function(){
+             if(this.attacking){
+           if(!this.renderable.isCurrentAnimation("attack")) {
+               //sets the current animation to attack and once that is over
+               //goes back to the idle animation
+               this.renderable.setCurrentAnimation("attack", "idle");
+               //Makes it so that the nest time we start this sequence we begin
+               //from the first animation, not wherever we left off when we switched
+               //to another animation
+               me.audio.play("slash");
+               this.renderable.setAnimationFrame();
+           }
+       }
+       
+       //make the character stand normally facing us and set that as current animation
+       else if(this.body.vel.x !==0 && !this.renderable.isCurrentAnimation("attack")) {
+           //when you attack, don't stay in that animation
+       if(!this.renderable.isCurrentAnimation("walk")) {
+           this.renderable.setCurrentAnimation("walk");
+       }
+       }else if(!this.renderable.isCurrentAnimation("attack")){
+           //don't forget to leave your currnet animation idle
+           this.renderable.setCurrentAnimation("idle");
+       }  
+           },
    
    loseHealth: function(damage){
      this.health = this.health - damage; 
@@ -165,7 +167,24 @@ this.body.pausing = true;
    collideHandler: function(response){
        //This makes the tower solid and also on the top
        if(response.b.type === "EnemyBaseEntity"){
-           var ydif = this.pos.y - response.b.pos.y;
+           this.collideWithEnemyBase(response);
+           if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= game.data.playerAttackTimer){
+               this.lastHit = this.now;
+               //if the creeps' health  is less than out attack, execute code in if statement
+               if(response.b.health <= game.data.playerAttack){
+                   //adds one gold for a creep kill
+                   game.data.gold += 1;
+                   console.log("Current gold: " + game.data.gold);
+               }
+               
+               response.b.loseHealth(game.data.playerAttack);
+           }
+       }else if(response.b.type === "EnemyCreep"){
+           this.collideWithEnemyCreep(response);
+       }
+   },
+   collideWithEnemyBase: function(response){
+        var ydif = this.pos.y - response.b.pos.y;
            var xdif = this.pos.x - response.b.pos.x;
            
            console.log("xdif" + xdif + " ydif " +ydif);
@@ -182,23 +201,18 @@ this.body.pausing = true;
                this.body.vel.x = 0;
                //this.pos.x = this.pos.x +1;
            }
-        
-           if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= game.data.playerAttackTimer){
-               this.lastHit = this.now;
-               //if the creeps' health  is less than out attack, execute code in if statement
-               if(response.b.health <= game.data.playerAttack){
-                   //adds one gold for a creep kill
-                   game.data.gold += 1;
-                   console.log("Current gold: " + game.data.gold);
-               }
-               
-               response.b.loseHealth(game.data.playerAttack);
-           }
-       }else if(response.b.type === "EnemyCreep"){
+   },
+   collideWithEnemyCreep: function(response){
+       
            var xdif = this.pos.x - response.b.pos.x; 
            var ydif = this.pos.y - response.b.pos.y;
-           
-           if(xdif>0){
+this.stopMovement(xdif);
+          if(this.checkAttack(xdif, ydif)){
+               this.hitCreep();
+          };
+   },
+  stopMovement: function(xdif){
+       if(xdif>0){
                //this.pos.x = this.pos.x + 1;
                if(this.facing === "left"){
                    this.body.vel.x = 0;
@@ -209,15 +223,24 @@ this.body.pausing = true;
                    this.body.vel.x = 0;
                }
            }
-
-           if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= game.data.playerAttackTimer
+  },
+  checkAttack: function(xdif, ydif){
+       if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= game.data.playerAttackTimer
                   && (Math.abs(ydif) <= 40) && 
                   (((xdif>0) && this.facing === "left") || ((xdif<0) && this.facing === "right")) 
                   ){
                this.lastHit = this.now;
-               response.b.loseHealth(game.data.playerAttack);
-               
+               //if the creeps health os less tahn our attack, execute the code in our if statement
+               return true;
            }
-       }
-   }
+           return false;
+  },
+  hitCreep: function(response){
+      if(response.b.health <= game.data.playerAttack){
+                   //adds one gold for a creep kill
+                   game.data.gold +=1;
+                   console.log("Currnet gold: " + game.data.gold);
+               }
+               response.b.loseHealth(game.data.playerAttack);
+  }
 });
