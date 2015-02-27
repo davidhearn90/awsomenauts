@@ -1,25 +1,24 @@
 game.PlayerEntity = me.Entity.extend({
     //our player entity is going to have a height and width of 64
+    //make this.example(); so that there is not too much code in our init function
    init: function(x, y, settings) {
        this.setSuper();
        this.setPlayerTimers();
        this.setAttributes();
-       this.type = "PlayerEntity";
        this.setFlags();
-
-    //get the camera to follow the player for more than one screen
-   me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
-
+   this.type = "PlayerEntity";
    this.addAnimation();
    //If the player stops running, he will stop at the idle image of the player
    this.renderable.setCurrentAnimation("idle");
    
-   
+   //get the camera to follow the player for more than one screen
+   me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
    
    },
-
+   
    setSuper: function(){
-    this._super(me.Entity, 'init', [x, y, {
+     //call the constructor
+       this._super(me.Entity, 'init', [x, y, {
                image: "player", 
                width: 64,
                height: 64,
@@ -28,69 +27,41 @@ game.PlayerEntity = me.Entity.extend({
                getShape: function() {
                    return(new me.Rect(0, 0, 64, 64)).toPolygon();
                }
-       }]);
-
+       }]);  
    },
-
- setPlayerTimers: function(){
-      this.now = new Date().getTime();
-      this.lastHit = this.now;
-      this.lastAttack = new Date().getTime();
-
- },
-
- setAttributes: function(){
-   this.health = game.data.playerHealth;
+   
+   setPlayerTimers: function(){
+       this.now = new Date().getTime();
+   this.lastHit = this.now;
+   this.lastAttack = new Date().getTime();
+   },
+   
+   setAttributes: function(){
+       this.health = game.data.playerHealth;
    //you can change height of how high you want to jump
    this.body.setVelocity(game.data.playerMoveSpeed, 21);
-   this.attack = game.data.playerAttack;
- 
- },
-
- setFlags: function(){
-   this.facing = "right";
-   this.dead = false;
-  
- },
-
- addAnimation: function(){
-  
-   //make the characcter walk normally
+   this.attack =  game.data.playerAttack;
+   },
+   
+   setFlags: function(){
+       //Keeps track of which direction your player is going
+       this.facing = "right";
+       this.dead = false;
+   },
+   
+   addAnimation: function(){
+        //make the characcter walk normally
    this.renderable.addAnimation("idle", [78]);
    this.renderable.addAnimation("walk", [117, 118, 119, 120, 121, 122, 123, 124, 125], 80);
-   this.renderable.addAnimation("attack",[65, 66, 67, 68, 69, 70, 71, 72], 80);
- },
-
+   this.renderable.addAnimation("attack",[65, 66, 67, 68, 69, 70, 71, 72], 80);  
+   },
    
    update: function(delta){
        this.now = new Date().getTime();
+     
+       this.dead = checkIfDead();
        
-       if(this.health <= 0){
-           this.dead = true;
-         
-       }
-       
-       if(me.input.isKeyPressed("right")) {
-           //adds to the position of my x by the velocity defined above in
-           //setVelocity() and multiplying it by me.timer.tick.
-           //me.timer.tick makes the movement look smooth
-           //flip the sprite on the horzontal axis
-           this.renderable.flipX(true);
-           this.body.vel.x += this.body.accel.x * me.timer.tick;
-           this.facing = "right";
-           
-       }
-       else if (me.input.isKeyPressed("left")) {
-           //now we unflip the sprite
-           this.renderable.flipX(false);
-           //make an if else statement of what happens when ever you press left
-           this.body.vel.x -= this.body.accel.x * me.timer.tick;
-           this.facing = "left";
-       }
-       //make the velocity for the x-axis be 0, otherwise the characher will move on its own
-        else {
-           this.body.vel.x = 0;
-       }
+       this.checkKeyPressesAndMove();
          
        if(me.input.isKeyPressed("attack")) {
            if(!this.renderable.isCurrentAnimation("attack")) {
@@ -121,13 +92,7 @@ game.PlayerEntity = me.Entity.extend({
        //make an if statement and input the player whenever he can jump
        //I can also add funny audio
        if(me.input.isKeyPressed("jump")) {
-           //maek the player fall whenever he jumps into the air
-           if(!this.body.jumping && !this.body.falling) {
-               //gravity will cause the player to fall
-               this.body.vel.y = -this.body.maxVel.y * me.timer.tick;
-               this.body.jumping = true;
-               me.audio.play("21");
-           }
+      this.jump();
        }
        //This can pause the game, but hard to resume
 if (me.input.isKeyPressed("pause")) {
@@ -145,6 +110,53 @@ this.body.pausing = true;
        this._super(me.Entity, "update", [delta]);
        return true;
    },
+   
+   checkIfDead: function(){
+       if(this.health <= 0){
+           return true;
+       }
+       return false;
+   },
+   
+   checkKeyPressesAndMove: function(){
+     if(me.input.isKeyPressed("right")) {
+         this.moveRight();
+     }else if (me.input.isKeyPressed("left")) {
+         this.moveLeft();
+       }
+       //make the velocity for the x-axis be 0, otherwise the characher will move on its own
+        else {
+           this.body.vel.x = 0;
+       }  
+   },
+           
+           moveRight: function(){
+              //adds to the position of my x by the velocity defined above in
+           //setVelocity() and multiplying it by me.timer.tick.
+           //me.timer.tick makes the movement look smooth
+           //flip the sprite on the horzontal axis
+           this.renderable.flipX(true);
+           this.body.vel.x += this.body.accel.x * me.timer.tick;
+           this.facing = "right";  
+           },
+           
+           moveLeft: function(){
+          //now we unflip the sprite
+           this.renderable.flipX(false);
+           //make an if else statement of what happens when ever you press left
+           this.body.vel.x -= this.body.accel.x * me.timer.tick;
+           this.facing = "left";      
+           },
+           
+           jump: function(){
+               //maek the player fall whenever he jumps into the air
+           if(!this.body.jumping && !this.body.falling) {
+               //gravity will cause the player to fall
+               this.body.vel.y = -this.body.maxVel.y * me.timer.tick;
+               this.body.jumping = true;
+               me.audio.play("21");
+           }
+           },
    
    loseHealth: function(damage){
      this.health = this.health - damage; 
@@ -165,7 +177,7 @@ this.body.pausing = true;
            
            else if(xdif>-35 && this.facing === "right" && (xdif<0)){
                this.body.vel.x = 0;
-               //this.pos.x = this.pos.x -1;
+              //this.pos.x = this.pos.x -1;
            } else if(xdif<70 && this.facing === "left" && (xdif>0)){
                this.body.vel.x = 0;
                //this.pos.x = this.pos.x +1;
@@ -173,6 +185,13 @@ this.body.pausing = true;
         
            if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= game.data.playerAttackTimer){
                this.lastHit = this.now;
+               //if the creeps' health  is less than out attack, execute code in if statement
+               if(response.b.health <= game.data.playerAttack){
+                   //adds one gold for a creep kill
+                   game.data.gold += 1;
+                   console.log("Current gold: " + game.data.gold);
+               }
+               
                response.b.loseHealth(game.data.playerAttack);
            }
        }else if(response.b.type === "EnemyCreep"){
@@ -196,17 +215,9 @@ this.body.pausing = true;
                   (((xdif>0) && this.facing === "left") || ((xdif<0) && this.facing === "right")) 
                   ){
                this.lastHit = this.now;
-              if (response.b.health <= game.data.playerAttack) {
-                  game.data.gold += 1;
-                  console.log("Current gold" + game.data.gold);
-                }
                response.b.loseHealth(game.data.playerAttack);
                
            }
        }
    }
 });
-
-
-
-
