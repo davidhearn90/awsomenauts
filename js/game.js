@@ -27,7 +27,8 @@ var game = {
                 exp1: 0,
                 exp2: 0,
                 exp3: 0,
-                exp4: 0
+                exp4: 0,
+                win: ""
     },
     
     
@@ -73,6 +74,7 @@ var game = {
             me.pool.register("levelTrigger", game.LevelTrigger);
             me.pool.register("GameTimerManager", game.GameTimerManager);
             me.pool.register("HeroDeathManager", game.HeroDeathManager);
+            me.pool.register("ExperienceManager", game.ExperienceManager);
             
         me.state.set(me.state.MENU, new game.TitleScreen());
         me.state.set(me.state.PLAY, new game.PlayScreen());
