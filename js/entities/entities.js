@@ -2,7 +2,7 @@ game.PlayerEntity = me.Entity.extend({
     //our player entity is going to have a height and width of 64
     //make this.example(); so that there is not too much code in our init function
    init: function(x, y, settings) {
-       this.setSuper();
+       this.setSuper(x, y);
        this.setPlayerTimers();
        this.setAttributes();
        this.setFlags();
@@ -16,7 +16,7 @@ game.PlayerEntity = me.Entity.extend({
    
    },
    
-   setSuper: function(){
+   setSuper: function(x, y){
      //call the constructor
        this._super(me.Entity, 'init', [x, y, {
                image: "player", 
@@ -60,7 +60,7 @@ game.PlayerEntity = me.Entity.extend({
    update: function(delta){
        this.now = new Date().getTime();
      
-       this.dead = checkIfDead();
+       this.dead = this.checkIfDead();
        
        this.checkKeyPressesAndMove();
         this.setAnimation();
@@ -168,17 +168,6 @@ this.body.pausing = true;
        //This makes the tower solid and also on the top
        if(response.b.type === "EnemyBaseEntity"){
            this.collideWithEnemyBase(response);
-           if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= game.data.playerAttackTimer){
-               this.lastHit = this.now;
-               //if the creeps' health  is less than out attack, execute code in if statement
-               if(response.b.health <= game.data.playerAttack){
-                   //adds one gold for a creep kill
-                   game.data.gold += 1;
-                   console.log("Current gold: " + game.data.gold);
-               }
-               
-               response.b.loseHealth(game.data.playerAttack);
-           }
        }else if(response.b.type === "EnemyCreep"){
            this.collideWithEnemyCreep(response);
        }
@@ -208,7 +197,7 @@ this.body.pausing = true;
            var ydif = this.pos.y - response.b.pos.y;
 this.stopMovement(xdif);
           if(this.checkAttack(xdif, ydif)){
-               this.hitCreep();
+               this.hitCreep(response);
           };
    },
   stopMovement: function(xdif){
@@ -238,8 +227,8 @@ this.stopMovement(xdif);
   hitCreep: function(response){
       if(response.b.health <= game.data.playerAttack){
                    //adds one gold for a creep kill
-                   game.data.gold +=1;
-                   console.log("Currnet gold: " + game.data.gold);
+                   game.data.gold += 1;
+                   console.log("Current gold: " + game.data.gold);
                }
                response.b.loseHealth(game.data.playerAttack);
   }
