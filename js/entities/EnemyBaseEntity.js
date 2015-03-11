@@ -40,7 +40,7 @@ game.EnemyBaseEntity = me.Entity.extend({
     },
     
     loseHealth: function() {
-        this.health--;
+        this.health-100;
     },
    collideHandler: function(response){
        

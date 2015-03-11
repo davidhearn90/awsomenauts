@@ -5,7 +5,7 @@ var game = {
     data : {
         // score
         score : 0,
-                enemyBaseHealth: 10,
+                enemyBaseHealth: 200,
                 playerBaseHealth: 10,
                 enemyCreepHealth: 2,
                 playerHealth: 3,
@@ -16,7 +16,7 @@ var game = {
 //                orcBaseSpeed: 3,
 //                orcBaseDefense: 0,
                 playerAttackTimer: 1000,
-                enemyCreepAttackTimer: 1000,
+                enemyCreepAttackTimer: 5000,
                 playerMoveSpeed: 5,
                 creepMoveSpeed: 5,
                 gameTimerManager: "",
