@@ -57,19 +57,30 @@ game.PlayerEntity = me.Entity.extend({
    this.renderable.addAnimation("attack",[65, 66, 67, 68, 69, 70, 71, 72], 80);  
    },
    
- update: function (delta){
-    this.now = new Date().getTime();
-    this.dead = this.checkIfDead();
-    this.checkKeyPressesAndMove();
-    this.setAnimation();
-
-    me.collision.check(this, true, this.collideHandler.bind(this), true);
-    this.body.update(delta);
-
-    this._super(me.Entity, "update", [delta]);// the code delta runs the animation from your renderable addanimation. 
-    return true;
-  },
-
+   update: function(delta){
+       this.now = new Date().getTime();
+     
+       this.dead = this.checkIfDead();
+       
+       this.checkKeyPressesAndMove();
+        this.setAnimation();
+       //This can pause the game, but hard to resume
+if (me.input.isKeyPressed("pause")) {
+    me.state.pause();
+this.body.pausing = true;
+    var resume_loop = setInterval(function check_resume() {
+        if (me.input.isKeyPressed("pause")) {
+            clearInterval(resume_loop);
+            me.state.resume();
+        }
+    }, 100);
+}
+       me.collision.check(this, true, this.collideHandler.bind(this), true);
+       this.body.update(delta);
+       this._super(me.Entity, "update", [delta]);
+       return true;
+   },
+   
    checkIfDead: function(){
        if(this.health <= 0){
            return true;
