@@ -5,10 +5,10 @@ var game = {
     data : {
         // score
         score : 0,
-                enemyBaseHealth: 200,
-                playerBaseHealth: 10,
-                enemyCreepHealth: 2,
-                playerHealth: 3,
+                enemyBaseHealth: 1,
+                playerBaseHealth: 1,
+                enemyCreepHealth: 5,
+                playerHealth: 7,
                 enemyCreepAttack: 1,
                 playerAttack: 1,
 //                orcBaseDamage: 10,
@@ -16,7 +16,7 @@ var game = {
 //                orcBaseSpeed: 3,
 //                orcBaseDefense: 0,
                 playerAttackTimer: 1000,
-                enemyCreepAttackTimer: 5000,
+                enemyCreepAttackTimer: 1000,
                 playerMoveSpeed: 5,
                 creepMoveSpeed: 5,
                 gameTimerManager: "",
@@ -24,13 +24,14 @@ var game = {
                 player: "",
                 exp: 0,
                 gold: 0,
-                exp1: 0,
+                exp1: 1,
                 exp2: 0,
                 exp3: 0,
                 exp4: 0,
                 win: "",
                 pausePos: "",
                 buyscreen: ""
+                
     },
     
     
@@ -48,10 +49,15 @@ var game = {
             me.plugin.register.defer(this, debugPanel, "debug");
         });
     }
-
-    me.save.add({exp: 0, exp1: 0, exp2: 0, exp3: 0, exp4:0});
-    me.state.SPENDEXP = 112;
-
+        
+        me.save.add({exp: 0, exp1: 0, exp2: 0, exp3: 0, exp4: 0});
+        
+        me.state.SPENDEXP = 112;
+        
+        console.log(game.data.exp);
+        console.log(game.data.exp2);
+        
+        
     // Initialize the audio.
     me.audio.init("mp3,ogg");
 
@@ -70,7 +76,6 @@ var game = {
     "loaded" : function () {
             //make a pool register that adds the player in the game
             //We set to ture if there is more than one of them
-            me.pool.register("levelTrigger", game.levelTrigger);
             me.pool.register("player", game.PlayerEntity, true);
             me.pool.register("PlayerBase", game.PlayerBaseEntity);
             me.pool.register("EnemyBase", game.EnemyBaseEntity);
@@ -84,8 +89,7 @@ var game = {
             
         me.state.set(me.state.MENU, new game.TitleScreen());
         me.state.set(me.state.PLAY, new game.PlayScreen());
-        me.state.set(me.state.SPENDEXP, new game.SpendExp());
-
+                me.state.set(me.state.SPENDEXP, new game.SpendExp());
 
         // Start the game from the title screen
         me.state.change(me.state.MENU);

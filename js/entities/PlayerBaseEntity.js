@@ -25,6 +25,7 @@ game.PlayerBaseEntity = me.Entity.extend({
     update: function(delta) {
         if(this.health<=0){
             this.broken = true;
+            //When the enemies set the abse on fire, you will automatically lose
             game.data.win = false;
             this.renderable.setCurrentAnimation("broken");
         }
@@ -32,13 +33,33 @@ game.PlayerBaseEntity = me.Entity.extend({
         
         this._super(me.Entity, "update", [delta]);
         return true;
+        
     },
     
     loseHealth: function(damage){
+        console.log(this.health);
       this.health = this.health - damage;  
     },
     
     onCollision: function(){
         
+    },
+    collideHandler: function(response){
+       
+   }
+}); 
+
+game.LevelTrigger = me.Entity.extend({
+    init: function(x, y, settings){
+        this._super(me.Entity, "init", [x, y, settings]);
+        this.body.onCollision = this.onCollision.bind(this);
+      this.level = settings.level;
+      this.xSpawn = settings.xSpawn;
+      this.ySpawn = settings.ySpawn;
+    },
+    onCollision: function(){
+        this.body.setCollisionMask(me.collision.types.NO_OBJECT);
+        me.levelDirector.loadLevel(this.level);
+        me.state.current().resetPlayer(this.xSpawn, this.ySpawn);
     }
 });

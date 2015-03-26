@@ -37,8 +37,7 @@ game.PlayerEntity = me.Entity.extend({
    },
    
    setAttributes: function(){
-       this.health = game.data.playerHealth;
-   //you can change height of how high you want to jump
+   this.health = game.data.playerHealth;
    this.body.setVelocity(game.data.playerMoveSpeed, 21);
    this.attack =  game.data.playerAttack;
    },
