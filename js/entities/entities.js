@@ -2,7 +2,7 @@ game.PlayerEntity = me.Entity.extend({
     //our player entity is going to have a height and width of 64
     //make this.example(); so that there is not too much code in our init function
    init: function(x, y, settings) {
-       this.setSuper(x, y);
+       this.setSuper();
        this.setPlayerTimers();
        this.setAttributes();
        this.setFlags();
@@ -37,7 +37,8 @@ game.PlayerEntity = me.Entity.extend({
    },
    
    setAttributes: function(){
-   this.health = game.data.playerHealth;
+       this.health = game.data.playerHealth;
+   //you can change height of how high you want to jump
    this.body.setVelocity(game.data.playerMoveSpeed, 21);
    this.attack =  game.data.playerAttack;
    },
@@ -63,21 +64,27 @@ game.PlayerEntity = me.Entity.extend({
        
        this.checkKeyPressesAndMove();
         this.setAnimation();
-       //This can pause the game, but hard to resume
-if (me.input.isKeyPressed("pause")) {
-    me.state.pause();
-this.body.pausing = true;
-    var resume_loop = setInterval(function check_resume() {
-        if (me.input.isKeyPressed("pause")) {
-            clearInterval(resume_loop);
-            me.state.resume();
-        }
-    }, 100);
-}
+        
+               this.body.update(delta);
        me.collision.check(this, true, this.collideHandler.bind(this), true);
-       this.body.update(delta);
+      
+if(me.input.isKeyPressed("jump")) {
+      this.jump();
+       }
+        
+      if(this.body.vel.x !==0 && !this.renderable.isCurrentAnimation("attack")) {
+           //when you attack, don't stay in that animation
+       if(!this.renderable.isCurrentAnimation("walk")) {
+           this.renderable.setCurrentAnimation("walk");
+       }
+       }else if(!this.renderable.isCurrentAnimation("attack")){
+           //don't forget to leave your currnet animation idle
+           this.renderable.setCurrentAnimation("idle");
+       } 
+       
        this._super(me.Entity, "update", [delta]);
        return true;
+       
    },
    
    checkIfDead: function(){
@@ -99,9 +106,17 @@ this.body.pausing = true;
        }
        //make an if statement and input the player whenever he can jump
        //I can also add funny audio
-       if(me.input.isKeyPressed("jump")) {
-      this.jump();
-       }
+       
+       if (me.input.isKeyPressed("pause")) {
+    me.state.pause();
+this.body.pausing = true;
+    var resume_loop = setInterval(function check_resume() {
+        if (me.input.isKeyPressed("pause")) {
+            clearInterval(resume_loop);
+            me.state.resume();
+        }
+    }, 100);
+}
               this.attacking = me.input.isKeyPressed("attack");
 
    },
@@ -148,15 +163,7 @@ this.body.pausing = true;
        }
        
        //make the character stand normally facing us and set that as current animation
-       else if(this.body.vel.x !==0 && !this.renderable.isCurrentAnimation("attack")) {
-           //when you attack, don't stay in that animation
-       if(!this.renderable.isCurrentAnimation("walk")) {
-           this.renderable.setCurrentAnimation("walk");
-       }
-       }else if(!this.renderable.isCurrentAnimation("attack")){
-           //don't forget to leave your currnet animation idle
-           this.renderable.setCurrentAnimation("idle");
-       }  
+        
            },
    
    loseHealth: function(damage){
@@ -173,9 +180,7 @@ this.body.pausing = true;
    },
    collideWithEnemyBase: function(response){
         var ydif = this.pos.y - response.b.pos.y;
-           var xdif = this.pos.x - response.b.pos.x;
-           
-           
+           var xdif = this.pos.x - response.b.pos.x;  
             if(ydif<-40 && xdif< 70 && xdif>-35){
                this.body.falling = false;
                this.body.vel.y = -1;
@@ -186,7 +191,12 @@ this.body.pausing = true;
               //this.pos.x = this.pos.x -1;
            } else if(xdif<70 && this.facing === "left" && (xdif>0)){
                this.body.vel.x = 0;
-               //this.pos.x = this.pos.x +1;
+               this.pos.x = this.pos.x +1;
+           }
+           if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= 1000){
+               console.log("tower Hit");
+               this.lastHit = this.now;
+               response.b.loseHealth();
            }
    },
    collideWithEnemyCreep: function(response){
@@ -230,4 +240,5 @@ this.stopMovement(xdif);
                }
                response.b.loseHealth(game.data.playerAttack);
   }
+  
 });

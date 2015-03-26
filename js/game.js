@@ -5,7 +5,7 @@ var game = {
     data : {
         // score
         score : 0,
-                enemyBaseHealth: 1,
+                enemyBaseHealth: 3,
                 playerBaseHealth: 1,
                 enemyCreepHealth: 5,
                 playerHealth: 7,
@@ -20,17 +20,26 @@ var game = {
                 playerMoveSpeed: 5,
                 creepMoveSpeed: 5,
                 gameTimerManager: "",
-                heroDeathManagetr:"",
+                heroDeathManager:"",
                 player: "",
                 exp: 0,
                 gold: 0,
-                exp1: 1,
+                ability1: 0,
+                ability2: 0,
+                ability3: 0,
+                skill1: 0,
+                skill2: 0,
+                skill3: 0,
+                exp1: 0,
                 exp2: 0,
                 exp3: 0,
                 exp4: 0,
+                exp5: 0,
+                exp6: 0,
                 win: "",
                 pausePos: "",
-                buyscreen: ""
+                buyscreen: "",
+                buytext: ""
                 
     },
     
