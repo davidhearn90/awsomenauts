@@ -1,0 +1,184 @@
+@import url(http://fonts.googleapis.com/css?family=Chango);
+
+body {
+ margin:0;
+  font-family: 'Open Sans', sans-serif;
+  background: #eee;
+
+  /* make our image 100% width */
+  
+}
+
+.post{
+  color:green;
+  font-family: 'Yanone Kaffeesatz', sans-serif;
+  font-size: 20px;
+  padding: 0px, 100px, 0px, 0px;
+
+}
+h2{
+  color:red;
+  font-family: 'Yanone Kaffeesatz', sans-serif;
+  font-size: 50px;
+  padding: 0px, 1000px, 0px, 0px;
+
+
+}
+.conteudo .continue-lendo {
+  color:#000;
+  font-weight: 700; 
+  text-decoration: none;
+  transition: all 0.5s ease;
+}
+
+.conteudo .continue-lendo:hover {
+  margin-left:10px;
+}
+
+
+hr {
+  background:#dedede;
+  border:0;
+  height:1px;
+}
+
+.header {
+  overflow: hidden;
+  display:block;
+  position:fixed;
+  top:0;
+  margin:0;
+  width:100%;
+  height:4px;
+  text-align:center;
+}
+
+.header ul {
+  margin:0;
+  padding:0;
+}
+
+.header ul li {
+  overflow:hidden;
+  display:block;
+  float:left;
+  width:20%;
+  height:4px;
+}
+
+.header .cor-1 {
+  background:#f1c40f;
+}
+
+.header .cor-2 {
+  background:#e67e22;
+}
+
+.header .cor-3 {
+  background:#e74c3c;
+}
+
+.header .cor-4 {
+  background:#9b59b6;
+}
+
+.header .cor-5 {
+  background-color: hsla(10,40%,50%,1);
+}
+
+.wrap {
+  width: 950px;
+  margin:25px auto;
+}
+
+nav.menu ul {
+  overflow:hidden;
+  float:left;
+  width: 650px;
+  padding:0px;
+  margin: 100px;
+  list-style: none;
+  color:#fff;
+  background: #1abc9c;
+    -webkit-box-shadow: 1px 1px 1px 0px rgba(204,204,204,0.55);
+  -moz-box-shadow: 1px 1px 1px 0px rgba(204,204,204,0.55);
+  box-shadow: 1px 1px 1px 0px rgba(204,204,204,0.55);
+}
+
+nav.menu ul li {
+  float:left;
+  margin:0;
+}
+
+nav.menu ul a {
+  display:block;
+  padding:25px;
+  font-size: 16px;
+  font-weight:600;
+  text-transform: uppercase;
+  color:#fff;
+  text-decoration: none;
+  transition: all 0.5s ease;
+}
+
+nav.menu ul a:hover {
+  background:#16a085;
+  text-decoration: underline;
+}
+.sidebar .widget {
+  margin:0 0 25px;
+  padding:25px;
+  background:#fff;
+  transition: all 0.5s ease;
+  border-bottom: 2px solid #fff;
+}
+
+.sidebar .widget:hover {
+  border-bottom: 2px solid #3498db;
+}
+
+.sidebar .widget h2 {
+  margin:0 0 15px;
+  padding:0;
+  text-transform: uppercase;
+  font-size: 18px;
+  font-weight:800;
+  color:#3498db;
+}
+
+.sidebar .widget p {
+  font-size: 14px;
+}
+
+.sidebar .widget p:last-child {
+  margin:0;
+}
+.blog {
+  float:left;
+}
+#headers{
+        height:400px;
+        text-align:center;
+        font-size:80px;
+        padding:50px 0px 0px 0px;
+        color:whitesmoke;
+        letter-spacing:5px;
+      }
+
+
+  
+   @media (min-width: 320px) and (max-width: 480px) {
+   html,body{
+        background-image: url('http://fc04.deviantart.net/fs70/f/2014/185/5/9/tokyo_ghoul_bw_by_kokuimato-d7p9tnz.png');
+    }
+
+   } 
+
+   @media (min-width: 768px) and (max-width: 1024px) {
+   html,body{
+      background-image: url('http://th09.deviantart.net/fs71/PRE/f/2014/208/1/7/tokyo_ghoul_wallpaper_by_bobyramadhan-d7sgur1.png');
+    }
+
+   } 
+           
+      
