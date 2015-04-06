@@ -4,14 +4,6 @@
 //__dir__ checks the directory for model
 	
 
-            //creates table in blog database
-             $query = $_SESSION{"connection"}->query("CREATE TABLE posts ("
-                ."id int(11) Not NULL AUTO_INCREMENT,"
-             	."title varchar(255) NOT NULL,"
-                ."post text NOT NULL,"
-                ."DateTime datetime NOT NULL ,"
-                ."PRIMARY KEY (id))");
-            
               //creates users table in blog database
               $query = $_SESSION{"connection"}->query("CREATE TABLE users("
 
@@ -25,10 +17,19 @@
 
                 . "salt char(128) NOT NULL,"
 
+                ."exp int(4),"
+
+                ."exp1 int(4),"
+
+                ."exp2 int(4),"
+
+                ."exp3 int(4),"
+
+                ."exp4 int(4),"
+
                 . "PRIMARY KEY (id))");
 
-              //runs if there are no errors in the table//
-              
+ 
 
         	
 

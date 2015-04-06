@@ -30,4 +30,3 @@ if($query->num_rows ==1){
 		echo "<p>Invalid username and password</p>";
 	}
 }
-/
