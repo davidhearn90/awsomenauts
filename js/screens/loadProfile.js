@@ -1,11 +1,12 @@
 game.LoadProfile = me.ScreenObject.extend({
-	/**	
-	 *  action to perform on state change
-	 */
-	onResetEvent: function() {	
-		me.game.world.addChild(new me.Sprite(0, 0, me.loader.getImage("load-screen")),-10); // TODO
-            document.getElementById("input").style.visibility ="visible";
-        document.getElementById("load").style.visibility ="visible";
+    /** 
+     *  action to perform on state change
+     */
+    onResetEvent: function() {  
+        me.game.world.addChild(new me.Sprite(0, 0, me.loader.getImage("load-screen")),-10); // TODO
+                
+                document.getElementById("input").style.visibility = "visible";
+                document.getElementById("load").style.visibility = "visible";
                 
                 me.input.unbindKey(me.input.KEY.B);
                 me.input.unbindKey(me.input.KEY.Q);
@@ -17,7 +18,7 @@ game.LoadProfile = me.ScreenObject.extend({
                     init: function(){
                         this._super(me.Renderable, "init",[10, 10, 300, 50]);
                         //This can make the text of the Exp screen either bigger or smaller
-                        this.font = new me.Font("Arial", 26, "red");
+                        this.font = new me.Font("Arial", 26, "white");
                     //    me.input.registerPointerEvent('pointerdown', this, this.newGame.bind(this), true);
                     },
                     //If you click on start new game, your game will start from the start
@@ -28,14 +29,14 @@ game.LoadProfile = me.ScreenObject.extend({
                     
                 })));
                
-	},
-	
-	
-	/**	
-	 *  action to perform when leaving this screen (state change)
-	 */
-	onDestroyEvent: function() {
-        document.getElementById("input").style.visibility ="visible";
-        document.getElementById("load").style.visibility ="visible";
-	}
+    },
+    
+    
+    /** 
+     *  action to perform when leaving this screen (state change)
+     */
+    onDestroyEvent: function() {
+            document.getElementById("input").style.visibility = "hidden";
+                document.getElementById("load").style.visibility = "hidden";
+    }
 });
