@@ -27,7 +27,7 @@
 
                 . "PRIMARY KEY (id))");
 
-              //runs if there are no errors in the table
+              //runs if there are no errors in the table//
               
 
         	
