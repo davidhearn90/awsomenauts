@@ -5,9 +5,11 @@ var game = {
     data : {
         // score
         score : 0,
+                option1: "",
+                option2: "",
                 enemyBaseHealth: 3,
                 playerBaseHealth: 1,
-                enemyCreepHealth: 5,
+                enemyCreepHealth: 3,
                 playerHealth: 7,
                 enemyCreepAttack: 1,
                 playerAttack: 1,
@@ -21,6 +23,7 @@ var game = {
                 creepMoveSpeed: 5,
                 gameTimerManager: "",
                 heroDeathManager:"",
+                spearTimer: 15,
                 player: "",
                 exp: 0,
                 gold: 0,
@@ -42,7 +45,6 @@ var game = {
                 buytext: ""
                 
     },
-    
     
     // Run on page load.
     "onload" : function () {

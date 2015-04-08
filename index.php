@@ -5,7 +5,7 @@ require_once("php/Controller/create-db.php");
 <html>
 	<head>
 		<title>melonJS Template</title>
-		
+		<link rel='stylesheet' type='text/css' media='screen' href='index.css'>
 		<meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="mobile-web-app-capable" content="yes">
@@ -58,7 +58,7 @@ require_once("php/Controller/create-db.php");
                 <script type="text/javascript" src="js/gamemanagers/HeroDeathManager.js"></script>
                 <script type="text/javascript" src="js/screens/newProfile.js"></script>
                 <script type="text/javascript" src="js/screens/loadProfile.js"></script>
-		<script type="text/javascript" src="js/screens/title.js"></script>
+				<script type="text/javascript" src="js/screens/title.js"></script>
                 <script type="text/javascript" src="js/screens/play.js"></script>
                 <script type="text/javascript" src="js/screens/spendExp.js"></script>
 		
@@ -66,7 +66,6 @@ require_once("php/Controller/create-db.php");
 		<!-- Bootstrap & Mobile optimization tricks -->
 		<script type="text/javascript">
 			window.onReady(function onReady() {
-                            /* global game */
 				game.onload();
 				// Mobile browser hacks
 				if (me.device.isMobile && !navigator.isCocoonJS) {
@@ -128,6 +127,7 @@ require_once("php/Controller/create-db.php");
 				if(response==="Logon failure: unknown user name or bad password"){
 					alert(response);
 				}else{
+					alert(response);
 					var data = jQuery.parseJSON(response);
 					game.data.exp = data["exp"];
 					game.data.exp1 = data["exp1"];
