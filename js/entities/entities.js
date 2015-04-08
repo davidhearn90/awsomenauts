@@ -148,6 +148,16 @@ this.body.pausing = true;
                me.audio.play("21");
            }
            },
+
+            throwSpear: function(){
+               if((this.now-this.lastSpear) >= game.data.spearTimer*1000 && game.data.ability3 > 0){
+             this.lastSpear = this.now;
+            var spear = me.pool.pull("spear", this.pos.x, this.pos.y, {}, this.facing);
+            me.game.world.addChild(spear, 10);
+        }
+           },
+           
+
            setAnimation: function(){
              if(this.attacking){
            if(!this.renderable.isCurrentAnimation("attack")) {
